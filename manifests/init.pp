@@ -148,9 +148,11 @@
 #   TargetGroupEnabled registry keys.
 #
 # @param service_enable
-#   How the Windows Update service (wuauserv) starts, as the service resource's `enable`. Valid options: true (automatic),
-#   false (disabled), 'manual' (on demand, as Windows 10 and later ship it, started by its triggers) or 'delayed' (automatic,
-#   delayed). Default: true.
+#   Determines how the Windows Update service (wuauserv) starts. Valid options: 'true' (Automatic), 'manual' (Manual; Windows
+#   starts it when needed, as Windows 10 and Windows Server 2016 and later ship it), and 'delayed' (Automatic (Delayed Start)).
+#   Default: 'true'.
+#   'false' (Disabled) is refused: the client could not detect or install updates, and a registry change that refreshes the
+#   running service would start it again. This sets only the start mode; Puppet does not stop a running service.
 #
 class wsus_client (
   Optional[Variant[Stdlib::HTTPUrl,Boolean]] $server_url                                                            = undef,
@@ -176,7 +178,7 @@ class wsus_client (
   Optional[Variant[Integer[0,23],Boolean]] $active_hours_end                                                        = undef,
   Boolean $purge_values                                                                                             = false,
   Optional[Variant[String,Boolean]] $target_group                                                                   = undef,
-  Variant[Boolean, Enum['manual', 'delayed']] $service_enable                                                       = true,
+  Variant[Boolean[true],Enum['manual', 'delayed']] $service_enable                                                  = true,
 ) {
   $_basekey = 'HKLM\Software\Policies\Microsoft\Windows\WindowsUpdate'
 

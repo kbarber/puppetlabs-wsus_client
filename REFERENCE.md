@@ -311,11 +311,13 @@ Default value: `undef`
 
 ##### <a name="-wsus_client--service_enable"></a>`service_enable`
 
-Data type: `Variant[Boolean, Enum['manual', 'delayed']]`
+Data type: `Variant[Boolean[true],Enum['manual', 'delayed']]`
 
-How the Windows Update service (wuauserv) starts, as the service resource's `enable`. Valid options: true (automatic),
-false (disabled), 'manual' (on demand, as Windows 10 and later ship it, started by its triggers) or 'delayed' (automatic,
-delayed). Default: true.
+Determines how the Windows Update service (wuauserv) starts. Valid options: 'true' (Automatic), 'manual' (Manual; Windows
+starts it when needed, as Windows 10 and Windows Server 2016 and later ship it), and 'delayed' (Automatic (Delayed Start)).
+Default: 'true'.
+'false' (Disabled) is refused: the client could not detect or install updates, and a registry change that refreshes the
+running service would start it again. This sets only the start mode; Puppet does not stop a running service.
 
 Default value: `true`
 

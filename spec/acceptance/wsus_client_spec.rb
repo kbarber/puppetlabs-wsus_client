@@ -379,4 +379,33 @@ RSpec.describe 'wsus_client' do
       it_behaves_like 'registry_value undefined', 'ActiveHoursEnd'
     end
   end
+
+  context 'with service_enable =>' do
+    # The service's own start type: Start is 2 for automatic and 3 for manual, and DelayedAutostart marks delayed.
+    service_key = 'HKLM\\SYSTEM\\CurrentControlSet\\Services\\wuauserv'
+
+    # Leave wuauserv automatic, as every other context does.
+    after(:all) { create_apply_manifest({ service_enable: true }, false) }
+
+    { true => 2, 'manual' => 3 }.each do |enable, start|
+      describe enable.to_s do
+        it { create_apply_manifest service_enable: enable }
+
+        it_behaves_like 'registry_value', 'Start', service_key do
+          let(:reg_data) { start }
+        end
+      end
+    end
+
+    describe 'delayed' do
+      it { create_apply_manifest service_enable: 'delayed' }
+
+      it_behaves_like 'registry_value', 'Start', service_key do
+        let(:reg_data) { 2 }
+      end
+      it_behaves_like 'registry_value', 'DelayedAutostart', service_key do
+        let(:reg_data) { 1 }
+      end
+    end
+  end
 end

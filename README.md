@@ -24,7 +24,7 @@ This module configures Puppet agents to schedule update downloads and installati
 
 ### What wsus_client affects
 
-This module modifies registry keys in `HKLM\Software\Policies\Microsoft\Windows\WindowsUpdate`. For details about how registry key-driven WSUS configuration works, see the [Microsoft TechNet documentation](https://technet.microsoft.com/en-us/library/dd939844.aspx).
+This module modifies registry keys in `HKLM\Software\Policies\Microsoft\Windows\WindowsUpdate`, and sets the start mode of the Windows Update service (`wuauserv`), Automatic by default; see the `service_enable` parameter. For details about how registry key-driven WSUS configuration works, see the [Microsoft TechNet documentation](https://technet.microsoft.com/en-us/library/dd939844.aspx).
 
 **Note**: Because this module modifies registry keys on clients, it is incompatible with Group Policy Objects that manage the same WSUS settings. **Do not use wsus_client to configure WSUS access or automatic updates if you use Group Policies to configure such options on clients**, as doing so can lead to unexpected behavior. Instead, consult Microsoft's documentation on [configuring automatic updates using Group Policy](https://technet.microsoft.com/en-us/library/dd939933.aspx).
 

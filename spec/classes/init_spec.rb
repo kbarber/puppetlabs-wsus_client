@@ -153,21 +153,32 @@ describe 'wsus_client' do
         end
       end
 
-      context 'with the Windows Update service' do
-        it { is_expected.to contain_service('wuauserv').with_enable(true) }
+      context 'with service_enable =>' do
+        it { is_expected.to contain_service('wuauserv').with_enable(true).without_ensure }
 
-        [true, false, 'manual', 'delayed'].each do |enable|
-          describe "service_enable => #{enable}" do
+        ['manual', 'delayed'].each do |enable|
+          describe enable do
             let(:params) { { service_enable: enable } }
 
-            it { is_expected.to contain_service('wuauserv').with_enable(enable) }
+            it { is_expected.to contain_service('wuauserv').with_enable(enable).without_ensure }
           end
         end
 
-        describe 'service_enable => an unknown start mode' do
-          let(:params) { { service_enable: 'mask' } }
+        describe 'manual with no_auto_update' do
+          let(:params) { { no_auto_update: true, service_enable: 'manual' } }
 
-          it { is_expected.to compile.and_raise_error(%r{service_enable}) }
+          it { is_expected.to contain_service('wuauserv').with_enable('manual').without_ensure }
+        end
+
+        [false, 'mask'].each do |enable|
+          describe enable.to_s do
+            let(:params) { { service_enable: enable } }
+            let(:error_message) do
+              %r{parameter 'service_enable' expects a value of type Boolean\[true\] or Enum\['delayed', 'manual'\]}
+            end
+
+            it_behaves_like 'fail validation'
+          end
         end
       end
 
