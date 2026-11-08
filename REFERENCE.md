@@ -62,6 +62,7 @@ The following parameters are available in the `wsus_client` class:
 * [`active_hours_end`](#-wsus_client--active_hours_end)
 * [`purge_values`](#-wsus_client--purge_values)
 * [`target_group`](#-wsus_client--target_group)
+* [`service_enable`](#-wsus_client--service_enable)
 
 ##### <a name="-wsus_client--server_url"></a>`server_url`
 
@@ -307,6 +308,16 @@ This enabled parameter is only respected when the WSUS server allows clients to 
 TargetGroupEnabled registry keys.
 
 Default value: `undef`
+
+##### <a name="-wsus_client--service_enable"></a>`service_enable`
+
+Data type: `Variant[Boolean, Enum['manual', 'delayed']]`
+
+How the Windows Update service (wuauserv) starts, as the service resource's `enable`. Valid options: true (automatic),
+false (disabled), 'manual' (on demand, as Windows 10 and later ship it, started by its triggers) or 'delayed' (automatic,
+delayed). Default: true.
+
+Default value: `true`
 
 ## Defined types
 

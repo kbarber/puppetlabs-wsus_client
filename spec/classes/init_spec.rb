@@ -153,6 +153,24 @@ describe 'wsus_client' do
         end
       end
 
+      context 'with the Windows Update service' do
+        it { is_expected.to contain_service('wuauserv').with_enable(true) }
+
+        [true, false, 'manual', 'delayed'].each do |enable|
+          describe "service_enable => #{enable}" do
+            let(:params) { { service_enable: enable } }
+
+            it { is_expected.to contain_service('wuauserv').with_enable(enable) }
+          end
+        end
+
+        describe 'service_enable => an unknown start mode' do
+          let(:params) { { service_enable: 'mask' } }
+
+          it { is_expected.to compile.and_raise_error(%r{service_enable}) }
+        end
+      end
+
       context 'with server_url =>' do
         let(:reg_type) { 'string' }
         let(:reg_data) { 'https://SERVER:8530' }

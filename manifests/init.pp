@@ -147,6 +147,11 @@
 #   This enabled parameter is only respected when the WSUS server allows clients to modify this setting via the TargetGroup and
 #   TargetGroupEnabled registry keys.
 #
+# @param service_enable
+#   How the Windows Update service (wuauserv) starts, as the service resource's `enable`. Valid options: true (automatic),
+#   false (disabled), 'manual' (on demand, as Windows 10 and later ship it, started by its triggers) or 'delayed' (automatic,
+#   delayed). Default: true.
+#
 class wsus_client (
   Optional[Variant[Stdlib::HTTPUrl,Boolean]] $server_url                                                            = undef,
   Optional[Boolean] $enable_status_server                                                                           = undef,
@@ -171,6 +176,7 @@ class wsus_client (
   Optional[Variant[Integer[0,23],Boolean]] $active_hours_end                                                        = undef,
   Boolean $purge_values                                                                                             = false,
   Optional[Variant[String,Boolean]] $target_group                                                                   = undef,
+  Variant[Boolean, Enum['manual', 'delayed']] $service_enable                                                       = true,
 ) {
   $_basekey = 'HKLM\Software\Policies\Microsoft\Windows\WindowsUpdate'
 
@@ -187,7 +193,7 @@ class wsus_client (
   }
 
   service { 'wuauserv':
-    enable => true,
+    enable => $service_enable,
   }
 
   Registry_value { require => Registry_key[$_basekey], notify => Service['wuauserv'] }
